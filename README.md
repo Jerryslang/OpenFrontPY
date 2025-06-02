@@ -37,11 +37,12 @@ This project uses a dual-licensing approach:
 - FastApi[Standard] through pip
 
 ## 🚀 Bundling And interpreting the source code
-to compile the application use ``bash
+to compile the application use 
+```bash
 npm run build-dev
-``
+```
 
 ## Running the Client
-``bash
+```bash
 fastapi run client.py
-``
+```
