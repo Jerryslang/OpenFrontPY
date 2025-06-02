@@ -12,7 +12,7 @@
 
 OpenFront is an online real-time strategy game focused on territorial control and alliance building. Players compete to expand their territory, build structures, and form strategic alliances in various maps based on real-world geography.
 
-This (OpenFrontPY) is a fork of OpenFront.io this fork aims to replace the server with fastapi while still allowing for easy modifications to the source code
+This (OpenFrontPY) is a fork of OpenFront.io this fork aims to replace the server with fastapi while still allowing for easy modifications to the source code by providing a minimal node.js environment for webpacks / typescript interpreting
 
 # OpenFront - Licensing
 
