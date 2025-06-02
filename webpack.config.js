@@ -9,8 +9,16 @@ import webpack from "webpack";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const gitCommit =
-  process.env.GIT_COMMIT ?? execSync("git rev-parse HEAD").toString().trim();
+let gitCommit = process.env.GIT_COMMIT;
+
+if (!gitCommit) {
+  try {
+    gitCommit = execSync("git rev-parse HEAD").toString().trim();
+  } catch {
+    gitCommit = "unknown";
+    console.warn("Warning: not a git repository. Using default commit hash.");
+  }
+}
 
 export default async (env, argv) => {
   const isProduction = argv.mode === "production";
@@ -19,7 +27,7 @@ export default async (env, argv) => {
     entry: "./src/client/Main.ts",
     output: {
       publicPath: "/",
-      filename: "js/[name].[contenthash].js", // Added content hash
+      filename: "js/[name].[contenthash].js",
       path: path.resolve(__dirname, "static"),
       clean: isProduction,
     },
@@ -27,16 +35,16 @@ export default async (env, argv) => {
       rules: [
         {
           test: /\.bin$/,
-          type: "asset/resource", // Changed from raw-loader
+          type: "asset/resource",
           generator: {
-            filename: "binary/[name].[contenthash][ext]", // Added content hash
+            filename: "binary/[name].[contenthash][ext]",
           },
         },
         {
           test: /\.txt$/,
-          type: "asset/resource", // Changed from raw-loader
+          type: "asset/resource",
           generator: {
-            filename: "text/[name].[contenthash][ext]", // Added content hash
+            filename: "text/[name].[contenthash][ext]",
           },
         },
         {
@@ -50,9 +58,7 @@ export default async (env, argv) => {
             "style-loader",
             {
               loader: "css-loader",
-              options: {
-                importLoaders: 1,
-              },
+              options: { importLoaders: 1 },
             },
             {
               loader: "postcss-loader",
@@ -68,7 +74,7 @@ export default async (env, argv) => {
           test: /\.(webp|png|jpe?g|gif)$/i,
           type: "asset/resource",
           generator: {
-            filename: "images/[name].[contenthash][ext]", // Added content hash
+            filename: "images/[name].[contenthash][ext]",
           },
         },
         {
@@ -77,16 +83,16 @@ export default async (env, argv) => {
         },
         {
           test: /\.svg$/,
-          type: "asset/resource", // Changed from asset/inline for caching
+          type: "asset/resource",
           generator: {
-            filename: "images/[name].[contenthash][ext]", // Added content hash
+            filename: "images/[name].[contenthash][ext]",
           },
         },
         {
           test: /\.(woff|woff2|eot|ttf|otf)$/,
-          type: "asset/resource", // Changed from file-loader
+          type: "asset/resource",
           generator: {
-            filename: "fonts/[name].[contenthash][ext]", // Added content hash and fixed path
+            filename: "fonts/[name].[contenthash][ext]",
           },
         },
       ],
@@ -96,7 +102,7 @@ export default async (env, argv) => {
       alias: {
         "protobufjs/minimal": path.resolve(
           __dirname,
-          "node_modules/protobufjs/minimal.js",
+          "node_modules/protobufjs/minimal.js"
         ),
       },
     },
@@ -104,7 +110,6 @@ export default async (env, argv) => {
       new HtmlWebpackPlugin({
         template: "./src/client/index.html",
         filename: "index.html",
-        // Add optimization for HTML
         minify: isProduction
           ? {
               collapseWhitespace: true,
@@ -118,7 +123,7 @@ export default async (env, argv) => {
       }),
       new webpack.DefinePlugin({
         "process.env.WEBSOCKET_URL": JSON.stringify(
-          isProduction ? "" : "localhost:3000",
+          isProduction ? "" : "localhost:3000"
         ),
         "process.env.GAME_ENV": JSON.stringify(isProduction ? "prod" : "dev"),
         "process.env.GIT_COMMIT": JSON.stringify(gitCommit),
@@ -138,7 +143,6 @@ export default async (env, argv) => {
       }),
     ],
     optimization: {
-      // Add optimization configuration for better caching
       runtimeChunk: "single",
       splitChunks: {
         cacheGroups: {
@@ -161,7 +165,6 @@ export default async (env, argv) => {
           compress: true,
           port: 9000,
           proxy: [
-            // WebSocket proxies
             {
               context: ["/socket"],
               target: "ws://localhost:3000",
@@ -169,7 +172,6 @@ export default async (env, argv) => {
               changeOrigin: true,
               logLevel: "debug",
             },
-            // Worker WebSocket proxies - using direct paths without /socket suffix
             {
               context: ["/w0"],
               target: "ws://localhost:3001",
@@ -194,7 +196,6 @@ export default async (env, argv) => {
               changeOrigin: true,
               logLevel: "debug",
             },
-            // Worker proxies for HTTP requests
             {
               context: ["/w0"],
               target: "http://localhost:3001",
@@ -219,7 +220,6 @@ export default async (env, argv) => {
               changeOrigin: true,
               logLevel: "debug",
             },
-            // Original API endpoints
             {
               context: [
                 "/api/env",
