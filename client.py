@@ -27,8 +27,6 @@ app.mount("/icons", StaticFiles(directory="static/icons"), name="icons")
 app.mount("/lang", StaticFiles(directory="static/lang"), name="languages")
 app.mount("/maps", StaticFiles(directory="static/maps"), name="maps")
 app.mount("/sprites", StaticFiles(directory="static/sprites"), name="sprites")
-app.mount("/mods", StaticFiles(directory="mods"), name="mods")
-
 
 @app.get("/")
 async def root():
