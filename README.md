@@ -1,4 +1,4 @@
-# OpenFrontIO
+# OpenFrontPY
 
 <p align="center">
   <picture>
